@@ -12,36 +12,36 @@ The latest stable version is published in gemcutter.
 
 == How to use
 
-require 'rubygems'
-require 'context_config'
+  require 'rubygems'
+  require 'context_config'
 
-##
-# Pure config in a block	
-ContextConfig.configure do |my_config|
+  ##
+  # Pure config in a block	
+  ContextConfig.configure do |my_config|
 
-  my_config.a = "Value of a"
-  my_comfig.b = "Value of b"
-end
+    my_config.a = "Value of a"
+    my_comfig.b = "Value of b"
+  end
 		
-##
-# Config like hash notation in a block
-ContextConfig.configure do |other_config|
+  ##
+  # Config like hash notation in a block
+  ContextConfig.configure do |other_config|
 		
-  other_config[:key]       = ["value1", "value2" ]
-  other_config[:other_key] = { :new=>"values" }
-end
+    other_config[:key]       = ["value1", "value2" ]
+    other_config[:other_key] = { :new=>"values" }
+  end
 		
-##
-# Loading config from YAML file
-begin	
-  ContextConfig.load( "settings.yml" )
-rescue ContextConfigError => cce
-  fail( cce.message )
-end
+  ##
+  # Loading config from YAML file
+  begin	
+    ContextConfig.load( "settings.yml" )
+  rescue ContextConfigError => cce
+    fail( cce.message )
+  end
 
-puts ContextConfig.a
-puts ContextConfig[:b]
-puts ContextConfig.all.inspect
+  puts ContextConfig.a
+  puts ContextConfig[:b]
+  puts ContextConfig.all.inspect
    
 == TODO
 
