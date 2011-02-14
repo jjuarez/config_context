@@ -51,29 +51,4 @@ task :test => [:clean, :build] do
 end
 
 
-task :publish => [:test] do
-  begin
-    require 'gemcutter'
-    
-    gem push "./pkg/#{Version::COMPLETE}.gem"    
-  rescue LoadError => e
-    fail( "gemcutter not available: #{e.message}" )
-  end
-end
-
-
-task :metrics do
-
-  begin
-    require 'metric_fu'
-
-    MetricFu::Configuration.run do |config|
-      config.metrics  = [:churn, :saikuro, :stats, :flog, :flay]
-      config.graphs   = [:flog, :flay, :stats]
-    end
-  rescue LoadError => e
-    fail( "You need rcov gem: #{e.message}")
-  end
-end
-
 task :default=>[:build]
