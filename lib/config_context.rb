@@ -26,14 +26,20 @@ module ConfigContext
     end
 
     def []( key )
+
+      @config ||= {}
       @config[key.to_sym] if @config
     end
     
     def[]=( key, value )
+
+      @config ||= {}
       @config[key.to_sym] = value if @config
     end
     
     def all
+      
+      @config ||= {}
       @config
     end
   
