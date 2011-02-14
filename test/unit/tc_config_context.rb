@@ -7,7 +7,7 @@ require 'config_context'
 class TestLibraryFileName < Test::Unit::TestCase
   
   TEST_HASH = { :a=>'a', :b=>'b', :c=>'c' }
-  TEST_FILE = "../fixtures/test.yml"
+  TEST_FILE = File.join( File.dirname( __FILE__ ), %w[ .. fixtures test.yml] )
   
   def test_case_configure
     
