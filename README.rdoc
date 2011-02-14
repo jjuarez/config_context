@@ -1,6 +1,6 @@
 = Remote Executor: 
 
-Your config context...
+Your DSL config context...
 
 == Installing
     
@@ -10,44 +10,46 @@ The latest stable version is published in gemcutter.
   gem install context_config
 
 
-== Notes
-
-
 == How to use
 
-	require 'context_config'
-	
-	begin
-	  ContextConfig.configure do |my_config|
-        my_config.a = "Value of a"
-        my_comfig.b = "Value of b"
-      end
+require 'rubygems'
+require 'context_config'
+
+##
+# Pure config in a block	
+ContextConfig.configure do |my_config|
+
+  my_config.a = "Value of a"
+  my_comfig.b = "Value of b"
+end
 		
-      ContextConfig.load( "settings.yml" )
+##
+# Config like hash notation in a block
+ContextConfig.configure do |other_config|
 		
-      ContextConfig.configure do |other_config|
+  other_config[:key]       = ["value1", "value2" ]
+  other_config[:other_key] = { :new=>"values" }
+end
 		
-        other_config[:key]       = ["value1", "value2" ]
-        other_config[:other_key] = { :new=>"values" }
-      end
-		
-      puts ContextConfig.a
-      puts ContextConfig[:a]	
-	rescue ContextConfigError => cce
-      fail( cce.message )
-	end
+##
+# Loading config from YAML file
+begin	
+  ContextConfig.load( "settings.yml" )
+rescue ContextConfigError => cce
+  fail( cce.message )
+end
+
+puts ContextConfig.a
+puts ContextConfig[:b]
+puts ContextConfig.all.inspect
    
 == TODO
 
 * Document all this stuff in english... I promise
-* Write some test could be a gread idea
-* Take decisions about user by hosts or user by farm
-* Pullrequests are welcome... of course
-
   
 == License
 
-Copyright (c) 2010-2030 Javier Juarez Martinezi
+Copyright (c) 2010-2030 Javier Juarez Martinez
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
