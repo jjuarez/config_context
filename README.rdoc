@@ -6,9 +6,8 @@ Your DSL config context...
     
 The latest stable version is published in gemcutter.
 
-  gem source --add http://gemcutter.org
-  gem install context_config
-
+  rake 
+  gem install ./pk/config_context-${VERSION}.gem
 
 == How to use
 
