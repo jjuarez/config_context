@@ -1,13 +1,12 @@
-module Version
-  module Info
-  
-    MAJOR  = 0 
-    MINOR  = 0 
-    PATCH  = 1
-    
-  end
+module ConfigContext
+  module Version
+    INFO = {
+      :major =>0,
+      :minor =>2,
+      :patch =>0
+    }
 
-  NAME     = 'config_context'
-  INFO     = "#{Info::MAJOR}.#{Info::MINOR}.#{Info::PATCH}"
-  COMPLETE = "#{NAME}-#{INFO}"
+    NAME    = 'config_context'
+    VERSION = INFO.values.join( '.' )
+  end
 end

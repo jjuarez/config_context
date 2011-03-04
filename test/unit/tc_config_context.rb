@@ -1,60 +1,63 @@
 $:.unshift( File.join( File.dirname( __FILE__ ), %w[.. .. lib] ) )
 
+
+require 'rubygems'
 require 'test/unit'
+require 'shoulda'
 require 'config_context'
 
 
 class TestConfigContext < Test::Unit::TestCase
+
+  context "A ConfigContext" do
+
+    setup do
+
+      ConfigContext.configure do |config|
+
+        config.element = "element"
+        config.mylist    = [1,2,3]
+        config.myhash    = { :a=>1, :b=>2, :c=>3 }
+      end
+
+      ConfigContext['string']  = "String"
+      ConfigContext[:mysymbol] = "I am a pretty symbol"
+    end
+    
+    should "Test configure members" do
+    
+      assert_equal( ConfigContext.element, "element" )
+      assert_equal( ConfigContext.mylist, [1,2,3] )
+      assert_equal( ConfigContext.myhash, { :a=>1, :b=>2, :c=>3 } )
+      assert_equal( ConfigContext['string'], "String" )
+      assert_equal( ConfigContext.mysymbol, "I am a pretty symbol" )
+      assert_equal( ConfigContext[:mysymbol], "I am a pretty symbol" )
+    end
   
-  TEST_HASH = { :a=>'a', :b=>'b', :c=>'c' }
-  TEST_FILE = File.join( File.dirname( __FILE__ ), %w[ .. fixtures test.yml] )
-  
-  def test_case_configure
-    
-    ConfigContext.configure do |config|
-      config.a = "a"
-      config.b = "b"
-      config.c = "c"
-    end
-    
-    assert_equal( ConfigContext.a, "a" )
-    assert_equal( ConfigContext.b, "b" )
-    assert_equal( ConfigContext.c, "c" )
-  end
-
-  def test_case_all
-    
-    ConfigContext.configure do |config|
-      config.a = "a"
-      config.b = "b"
-      config.c = "c"
+    should "Test all properties" do
+     
+      assert_equal( ConfigContext.all, { :element=>"element", :mylist=>[1,2,3], :myhash=>{ :a=>1, :b=>2, :c=>3 }, :mysymbol=> 'I am a pretty symbol', 'string'=>'String' } )
     end
 
-    assert_equal( ConfigContext.all, TEST_HASH )
-  end
-
-  def test_case_hash
+    should "Test yaml load" do
     
-    ConfigContext.configure do |config|
-      config[:a] = "a"
-      config[:b] = "b"
-      config[:c] = "c"
+      ConfigContext.load( File.join( File.dirname( __FILE__ ), %w[ .. fixtures test.yml] ) )    
+      assert_equal( ConfigContext.all, { :element=>'element', :mylist=>[1,2,3], :myhash=>{ :a=>1, :b=>2, :c=>3 }, :mysymbol=>'I am a pretty symbol', 'string'=>'String' } )
     end
     
-    assert_equal( ConfigContext.a, "a" )
-    assert_equal( ConfigContext.b, "b" )
-    assert_equal( ConfigContext.c, "c" )
+    should "Test update property" do
+      
+      assert_equal( ConfigContext.element, "element" )
+      ConfigContext.element = "A"
+      assert_equal( ConfigContext.element, "A" )
 
-    assert_equal( ConfigContext[:a], "a" )
-    assert_equal( ConfigContext[:b], "b" )
-    assert_equal( ConfigContext[:c], "c" )
-    
-    assert_equal( ConfigContext.all, TEST_HASH )
-  end
+      assert_equal( ConfigContext.mylist, [1,2,3] )
+      ConfigContext.mylist = [4,5,6]
+      assert_equal( ConfigContext.mylist, [4,5,6] )
 
-  def test_case_yaml
-    
-    ConfigContext.load( TEST_FILE )    
-    assert_equal( ConfigContext.all, TEST_HASH )
+      assert_equal( ConfigContext.myhash, { :a=>1, :b=>2, :c=>3 } )
+      ConfigContext.myhash= { :d=>4, :e=>5, :f=>6 }
+      assert_equal( ConfigContext.myhash, { :d=>4, :e=>5, :f=>6 } )
+    end
   end
 end
