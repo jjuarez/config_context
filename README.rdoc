@@ -2,50 +2,65 @@
 
 Your DSL config context...
 
+
 == Installing
     
 The latest stable version is published in gemcutter.
 
-  rake 
-  gem install ./pk/config_context-${VERSION}.gem
+  gem install config_context
+  
 
 == How to use
 
   require 'rubygems'
   require 'context_config'
+  
+  ##
+  # Puts all your configuration context in a block
+  #	
+  ContextConfig.configure do |config|
 
-  ##
-  # Pure config in a block	
-  ContextConfig.configure do |my_config|
-
-    my_config.a = "Value of a"
-    my_comfig.b = "Value of b"
+    config.a             = "Value of a"
+    config.b             = "Value of b"
+    config.c             = { also:=>"complex", :values=>nil }
+    config[:d]           = [ "Value", "of", :d ]
+    config['String key'] = "My value"
   end
-		
+	
+	##
+	# Retrieve your properties
+  #
+  puts ConfigContext.a
+  puts ConfigContext.b
+  puts ConfigContext.c
+  puts ConfigContext.d
+  puts ConfigContext[:d]
+  puts ConfigContext['String key']
+  
   ##
-  # Config like hash notation in a block
-  ContextConfig.configure do |other_config|
-		
-    other_config[:key]       = ["value1", "value2" ]
-    other_config[:other_key] = { :new=>"values" }
-  end
-		
+  # Check the presence of a property
+  #
+  puts ConfigContext.b if( ConfigContext.b? )
+				
   ##
-  # Loading config from YAML file
+  # Load your config from a YAML file and overrides some properties...
+  #
   begin	
-    ContextConfig.load( "settings.yml" )
-  rescue ContextConfigError => cce
-    fail( cce.message )
+    ContextConfig.load( "settings.yml", :allow_collisions=>true )
+  rescue ContextConfig::Error => e
+    fail( e.message )
   end
-
-  puts ContextConfig.a
-  puts ContextConfig[:b]
+  
+  puts ContextConfig.a if( ContextConfig.a? )
   puts ContextConfig.all.inspect
+  puts ContextConfig.keys
    
+
 == TODO
 
 * Document all this stuff in english... I promise
-  
+
+
 == License
 
 Copyright (c) 2010-2030 Javier Juarez Martinez
