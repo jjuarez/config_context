@@ -10,43 +10,36 @@ module ConfigContext
   
   def method_missing( method, *arguments, &block )
   
-    if( method =~ /(.+)=$/)
+    if( method =~ /(.+)=$/ )
     
-      config_key          = method.to_s.delete( '=$' ).to_sym
+      config_key          = method.to_s.delete( '=' ).to_sym
       @config[config_key] = (arguments.length == 1) ? arguments[0] : arguments
+    elsif( method =~ /(.+)\?$/ )
+      
+      @config.has_key?( method.to_s.delete( '?' ).to_sym )
     else
-      return @config[method] if @config.keys.include?( method )
+      @config[method] if @config.has_key?( method )
     end
   end
 
+  def configure; yield self; end
 
-  def configure       
+  def []( key ) return @config[key]; end
+
+  def[]=( key, value ) @config[key] = value; end
+
+  def all; @config; end
+  
+  def keys; @config.keys; end
+
+
+  def load( config_file, options = { :allow_collisions => true } )
     
-    yield self
-  end
-
-
-  def []( key )
-    
-    return @config[key]
-  end
-
-
-  def[]=( key, value )
-
-    @config[key]=value
-  end
-
-
-  def all
-    
-    @config
-  end
-
-
-  def load( config_file )
-    
-    @config.merge!( YAML.load_file( config_file ) ) { |key, original_value, new_value| original_value }
+    if( options[:allow_collisions] )
+      @config.merge!( YAML.load_file( config_file ) )
+    else
+      @config.merge!( YAML.load_file( config_file ) ) { |key, original_value, new_value| original_value }
+    end
   rescue Exception => e
     raise ConfigContext::Error.new( e.message )
   end

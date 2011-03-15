@@ -1,5 +1,5 @@
 ---
-    :element: 'element'
+    :mysymbol: 'symbol'
     :mylist: 
         - 1
         - 2
@@ -8,5 +8,5 @@
         :a: 1
         :b: 2
         :c: 3
-    :mysymbol: 'I am a pretty symbol'
-    string: 'String'
+    string: 'string'
+    :othersymbol: 'othersymbol'

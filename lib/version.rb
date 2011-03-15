@@ -2,8 +2,8 @@ module ConfigContext
   module Version
     INFO = {
       :major =>0,
-      :minor =>2,
-      :patch =>2
+      :minor =>3,
+      :patch =>0
     }
 
     NAME    = 'config_context'
