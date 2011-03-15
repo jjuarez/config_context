@@ -13,12 +13,12 @@ The latest stable version is published in gemcutter.
 == How to use
 
   require 'rubygems'
-  require 'context_config'
+  require 'config_context'
   
   ##
   # Puts all your configuration context in a block
   #	
-  ContextConfig.configure do |config|
+  ConfigContext.configure do |config|
 
     config.a             = "Value of a"
     config.b             = "Value of b"
@@ -46,14 +46,14 @@ The latest stable version is published in gemcutter.
   # Load your config from a YAML file and overrides some properties...
   #
   begin	
-    ContextConfig.load( "settings.yml", :allow_collisions=>true )
-  rescue ContextConfig::Error => e
+    ConfigContext.load( "settings.yml", :allow_collisions=>true )
+  rescue ConfigContext::Error => e
     fail( e.message )
   end
   
-  puts ContextConfig.a if( ContextConfig.a? )
-  puts ContextConfig.all.inspect
-  puts ContextConfig.keys
+  puts ConfigContext.a if( ConfigContext.a? )
+  puts ConfigContext.all.inspect
+  puts ConfigContext.keys
    
 
 == TODO
