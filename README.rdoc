@@ -27,8 +27,8 @@ The latest stable version is published in gemcutter.
     config['String key'] = "My value"
   end
 	
-	##
-	# Retrieve your properties
+  ##
+  # Retrieve your properties
   #
   puts ConfigContext.a
   puts ConfigContext.b
