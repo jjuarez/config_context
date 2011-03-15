@@ -4,18 +4,12 @@ require 'yaml'
 module ConfigContext
   extend self
   
-  class ConfigContextError < StandardError; end
+  @config = { }
   
-  def init
-    
-    @config ||= {}
-  end
-
+  class Error < StandardError; end
   
   def method_missing( method, *arguments, &block )
   
-    self.init unless @config
-          
     if( method =~ /(.+)=$/)
     
       config_key          = method.to_s.delete( '=$' ).to_sym
@@ -34,16 +28,11 @@ module ConfigContext
 
   def []( key )
     
-    self.init unless @config
-
-    return @config[key] if @config[key]
-    nil
+    return @config[key]
   end
 
 
   def[]=( key, value )
-
-    self.init unless @config
 
     @config[key]=value
   end
@@ -51,21 +40,14 @@ module ConfigContext
 
   def all
     
-    self.init unless @config
-
     @config
   end
 
 
   def load( config_file )
     
-    self.init unless @config
-
-    yf = YAML.load_file( config_file )
-    yf.keys.each { |key| @config[key] = yf[key] } 
+    @config.merge!( YAML.load_file( config_file ) ) { |key, original_value, new_value| original_value }
   rescue Exception => e
-    raise ConfigContextError.new( e.message )
-  else
-    @config
+    raise ConfigContext::Error.new( e.message )
   end
 end

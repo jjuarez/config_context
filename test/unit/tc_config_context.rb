@@ -36,13 +36,41 @@ class TestConfigContext < Test::Unit::TestCase
   
     should "Test all properties" do
      
-      assert_equal( ConfigContext.all, { :element=>"element", :mylist=>[1,2,3], :myhash=>{ :a=>1, :b=>2, :c=>3 }, :mysymbol=> 'I am a pretty symbol', 'string'=>'String' } )
+      assert_equal( ConfigContext.all, { 
+        :element=>'element', 
+        :mylist=>[1,2,3], 
+        :myhash=>{ :a=>1, :b=>2, :c=>3 }, 
+        :mysymbol=> 'I am a pretty symbol', 'string'=>'String' } )
     end
 
-    should "Test yaml load" do
-    
+    should "Test yaml load without collisions" do
+       
+          
       ConfigContext.load( File.join( File.dirname( __FILE__ ), %w[ .. fixtures test.yml] ) )    
-      assert_equal( ConfigContext.all, { :element=>'element', :mylist=>[1,2,3], :myhash=>{ :a=>1, :b=>2, :c=>3 }, :mysymbol=>'I am a pretty symbol', 'string'=>'String' } )
+      assert_equal( ConfigContext.all, { 
+        :element=>'element', 
+        :mylist=>[1,2,3], 
+        :myhash=>{ :a=>1, :b=>2, :c=>3 }, 
+        :mysymbol=>'I am a pretty symbol', 'string'=>'String' } )
+    end
+        
+    should "Test yaml load with collisions" do
+    
+      ConfigContext.configure do |config|
+        config.element = 'first value'
+      end
+
+      ConfigContext.load( File.join( File.dirname( __FILE__ ), %w[ .. fixtures test.yml] ) )    
+      assert_equal( ConfigContext.all, { 
+        :element=>'first value', 
+        :mylist=>[1,2,3], 
+        :myhash=>{ :a=>1, :b=>2, :c=>3 }, 
+        :mysymbol=>'I am a pretty symbol', 'string'=>'String' } )
+    end
+    
+    should "Test yaml load with error in file" do
+        
+      assert_raises( ConfigContext::Error ) { ConfigContext.load( "very bad file.yml" ) }
     end
     
     should "Test update property" do
