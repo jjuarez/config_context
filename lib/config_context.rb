@@ -10,14 +10,15 @@ module ConfigContext
   
   def method_missing( method, *arguments, &block )
   
-    if( method =~ /(.+)=$/ )
+    if( method.to_s =~ /(.+)=$/ )
     
       config_key          = method.to_s.delete( '=' ).to_sym
       @config[config_key] = (arguments.length == 1) ? arguments[0] : arguments
-    elsif( method =~ /(.+)\?$/ )
+    elsif( method.to_s =~ /(.+)\?$/ )
       
       @config.has_key?( method.to_s.delete( '?' ).to_sym )
     else
+      
       @config[method] if @config.has_key?( method )
     end
   end
