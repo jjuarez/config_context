@@ -51,4 +51,4 @@ task :test => [:clean, :build] do
 end
 
 
-task :default=>[:build]
+task :default=>[:test]
