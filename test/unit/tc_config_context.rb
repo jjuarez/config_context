@@ -66,7 +66,7 @@ class TestConfigContext < Test::Unit::TestCase
     
     should "retrieve all property keys" do
 
-      assert_equal( ConfigContext.keys, [ :mysymbol, :mylist, :myhash, :othersymbol, 'string' ] )
+      assert_equal( ConfigContext.keys, [ :mysymbol, :mylist, :myhash, 'string', :othersymbol ] )
     end
 
     should "load a Yaml file without keys collisions" do
