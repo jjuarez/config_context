@@ -29,6 +29,8 @@ module ConfigContext
     else
       @config.merge!( YAML.load_file( config_file ) ) { |k, ov, nv| ov }
     end
+    
+    @config
   rescue Exception => e
     raise ConfigContext::Error.new( e.message )
   end
