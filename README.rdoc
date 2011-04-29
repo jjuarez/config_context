@@ -2,13 +2,11 @@
 
 Your DSL config context...
 
-
 == Installing
     
 The latest stable version is published in gemcutter.
 
   gem install config_context
-  
 
 == How to use
 
@@ -20,11 +18,9 @@ The latest stable version is published in gemcutter.
   #	
   ConfigContext.configure do |config|
 
-    config.a             = "Value of a"
-    config.b             = "Value of b"
-    config.c             = { also:=>"complex", :values=>nil }
-    config[:d]           = [ "Value", "of", :d ]
-    config['String key'] = "My value"
+    config.a = "Value of a"
+    config.b = "Value of b"
+    config.c = { also:=>"complex", :values=>nil }
   end
 	
   ##
@@ -33,9 +29,6 @@ The latest stable version is published in gemcutter.
   puts ConfigContext.a
   puts ConfigContext.b
   puts ConfigContext.c
-  puts ConfigContext.d
-  puts ConfigContext[:d]
-  puts ConfigContext['String key']
   
   ##
   # Check the presence of a property
@@ -43,18 +36,16 @@ The latest stable version is published in gemcutter.
   puts ConfigContext.b if( ConfigContext.b? )
 				
   ##
-  # Load your config from a YAML file and overrides some properties...
+  # Load your config from a YAML file
   #
   begin	
-    ConfigContext.load( "settings.yml", :allow_collisions=>true )
+    ConfigContext.load( "settings.yml" )
   rescue ConfigContext::Error => e
     fail( e.message )
   end
   
   puts ConfigContext.a if( ConfigContext.a? )
   puts ConfigContext.all.inspect
-  puts ConfigContext.keys
-   
 
 == TODO
 
