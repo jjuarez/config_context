@@ -4,59 +4,65 @@ require 'yaml'
 module ConfigContext
   extend self
   
-  @config = { }
+  @config = Hash.new
   
   class Error < StandardError; end
   
-  def method_missing( method, *arguments, &block )
-  
-    if( method.to_s =~ /(.+)=$/ )
+  private
+  def _add_property( method, *arguments )
     
-      @config[method.to_s.delete( '=' ).to_sym] = (arguments.length == 1) ? arguments[0] : arguments
+    property_key          = method.to_s.delete( '=' ).to_sym
+    @config[property_key] = arguments.length == 1 ? arguments[0] : arguments
+  end
+  
+  def _property?( method )
+    
+    property_key = method.to_s.delete( '?' ).to_sym
+    
+    @config.keys.include?( property_key )
+  end
+  
+  def _get_property( method )
+    
+    @config[method]
+  end
+  
+  
+  public
+  def method_missing( method, *arguments, &block )
+    
+    if( method.to_s =~ /(.+)=$/ )
+      _add_property( method, *arguments )
     elsif( method.to_s =~ /(.+)\?$/ )
-      
-      @config.has_key?( method.to_s.delete( '?' ).to_sym )
+      _property?( method )
     else
-      
-      @config[method] if @config.has_key?( method )
+      _get_property( method )
     end
   end
 
-  def load( config_file, options = { :allow_collisions => true } )
-    
-    if( options[:allow_collisions] )
-      @config.merge!( YAML.load_file( config_file ) )
-    else
-      @config.merge!( YAML.load_file( config_file ) ) { |k, ov, nv| ov }
+  def load( config_file ) 
+
+    YAML.load_file( config_file ).each do |key,value|
+      
+      @config[key] = value
     end
-    
-    @config
   rescue Exception => e
     raise ConfigContext::Error.new( e.message )
   end
 
   def configure()
-    
     yield self
   end
 
   def []( key ) 
-    
-    @config[key]
+    @config.key
   end
 
   def []=( key, value ) 
-    
     @config[key] = value
   end
 
   def all()
-    
     @config
-  end
-  
-  def keys
-    
-    @config.keys
   end
 end
