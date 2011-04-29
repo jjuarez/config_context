@@ -54,14 +54,6 @@ module ConfigContext
     yield self
   end
 
-  def []( key ) 
-    @config.key
-  end
-
-  def []=( key, value ) 
-    @config[key] = value
-  end
-
   def all()
     @config
   end
