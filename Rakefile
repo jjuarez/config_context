@@ -1,6 +1,5 @@
 begin
   require 'fileutils'
-  require 'rake/runtest'
   require 'jeweler'
     
 rescue LoadError => le
@@ -17,14 +16,12 @@ rescue LoadError => le
 end
 
 
-desc "Clean all temporary stuff..."
+desc "Clean all temporary stuff"
 task :clean do
-  
-  begin
-    FileUtils.remove_dir( File.join( File.dirname( __FILE__ ), 'pkg' ), true )
-  rescue Exception => e
-    fail( e.message )
-  end
+
+  require 'fileutils'
+      
+  [ "coverage", "coverage.data", "pkg" ].each { |fd| FileUtils.rm_rf( fd ) } 
 end
 
 
@@ -47,8 +44,24 @@ task :build =>[:clean] do
 end
 
 
+desc "Measures unit test coverage"
+task :coverage=>[:clean] do
+
+  INCLUDE_DIRECTORIES = "lib:test"
+
+  def run_coverage( files )
+
+    fail( "No files were specified for testing" ) if files.length == 0
+    sh "rcov --include #{INCLUDE_DIRECTORIES} --exclude gems/*,rubygems/* --sort coverage --aggregate coverage.data #{files.join( ' ' )}"
+  end
+
+  run_coverage Dir["test/**/*.rb"]
+end
+
+
 desc "Testing..."
-task :test => [:clean, :build] do 
+task :test=>[:build, :coverage] do 
+  require 'rake/runtest'
   
   Rake.run_tests 'test/unit/test_*.rb'
 end
