@@ -42,7 +42,7 @@ class TestConfigContext < Test::Unit::TestCase
     
     should "retrive all properties" do
      
-      assert_equal( ConfigContext.all, { 
+      assert_equal( ConfigContext.to_hash, { 
         :mysymbol =>TEST_SYMBOL, 
         :mylist   =>TEST_LIST, 
         :myhash   =>TEST_HASH
@@ -53,14 +53,14 @@ class TestConfigContext < Test::Unit::TestCase
 
       [ :mysymbol, :mylist, :myhash ].each do |key|
       
-        assert( ConfigContext.all.keys.include?( key ) )
+        assert( ConfigContext.to_hash.keys.include?( key ) )
       end
     end
 
     should "load a Yaml file" do
           
       assert_raises( ConfigContext::Error ) { ConfigContext.load( "very_bad_file.yml" ) }
-      ConfigContext.load( File.join( File.dirname( __FILE__ ), %w[ .. fixtures test.yml] ) )    
+      ConfigContext.configure( File.join( File.dirname( __FILE__ ), %w[ .. fixtures test.yml] ) )    
       assert_equal( ConfigContext.all, { 
         :mysymbol    =>TEST_SYMBOL, 
         :mylist      =>TEST_LIST, 

@@ -4,7 +4,7 @@ require 'yaml'
 module ConfigContext
   extend self
   
-  @config = Hash.new
+  @config = {}
   
   class Error < StandardError; end
   
@@ -18,17 +18,25 @@ module ConfigContext
   def _property?( method )
     
     property_key = method.to_s.delete( '?' ).to_sym
-    
     @config.keys.include?( property_key )
   end
   
   def _get_property( method )
-    
     @config[method]
+  end
+
+  def configure_from_yaml( config_file ) 
+
+    YAML.load_file( config_file ).each do |key,value|
+      
+      @config[key] = value
+    end
+  rescue Exception => e
+    raise ConfigContext::Error.new( e.message )
   end
   
   
-  public
+  public  
   def method_missing( method, *arguments, &block )
     
     if( method.to_s =~ /(.+)=$/ )
@@ -39,22 +47,22 @@ module ConfigContext
       _get_property( method )
     end
   end
-
-  def load( config_file ) 
-
-    YAML.load_file( config_file ).each do |key,value|
-      
-      @config[key] = value
-    end
-  rescue Exception => e
-    raise ConfigContext::Error.new( e.message )
+  
+  def configure( *arguments, &block )
+    
+    configuration = case arguments[0]
+      when /\.(yml|yaml)/i
+        configure_from_yaml( arguments[0] )
+      else
+        yield self if block_given?
+      end
   end
 
-  def configure()
-    yield self
-  end
-
-  def all()
+  def to_hash()
     @config
   end
+
+  # Backward compat with older versions
+  alias :load :configure
+  alias :all :to_hash
 end
