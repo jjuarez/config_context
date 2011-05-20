@@ -1,6 +1,7 @@
 = Config Context: 
 
-Your DSL config context...
+Your minimal and DSL config context...
+
 
 == Installing
     
@@ -8,7 +9,8 @@ The latest stable version is published in gemcutter.
 
   gem install config_context
 
-== How to use
+
+== How to use, some useful examples
 
   require 'rubygems'
   require 'config_context'
@@ -45,11 +47,16 @@ The latest stable version is published in gemcutter.
   end
   
   puts ConfigContext.a if( ConfigContext.a? )
-  puts ConfigContext.all.inspect
+  puts ConfigContext.to_hash.inspect
+
+
+  ##
+  #
+  #
 
 == TODO
 
-* Document all this stuff in english... I promise
+ * ???
 
 
 == License

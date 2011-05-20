@@ -18,6 +18,7 @@ class TestConfigContext < Test::Unit::TestCase
     setup do
 
       ConfigContext.configure do |config|
+        
         config.mysymbol = TEST_SYMBOL
         config.mylist   = TEST_LIST
         config.myhash   = TEST_HASH
@@ -57,15 +58,28 @@ class TestConfigContext < Test::Unit::TestCase
       end
     end
 
-    should "load a Yaml file" do
+    should "configure from a Yaml file" do
           
-      assert_raises( ConfigContext::Error ) { ConfigContext.load( "very_bad_file.yml" ) }
+      assert_raises( ConfigContext::Error ) { ConfigContext.configure( "very_bad_file.yml" ) }
+      
       ConfigContext.configure( File.join( File.dirname( __FILE__ ), %w[ .. fixtures test.yml] ) )    
-      assert_equal( ConfigContext.all, { 
+      assert_equal( ConfigContext.to_hash, { 
         :mysymbol    =>TEST_SYMBOL, 
         :mylist      =>TEST_LIST, 
         :myhash      =>TEST_HASH 
       } )
+    end
+
+    should "configurre from a Hash" do
+      
+      config_hash = { 
+        :mysymbol    =>TEST_SYMBOL, 
+        :mylist      =>TEST_LIST, 
+        :myhash      =>TEST_HASH 
+      }
+      
+      ConfigContext.configure( config_hash )
+      assert_equal( ConfigContext.to_hash, config_hash )
     end
     
     should "update properties" do

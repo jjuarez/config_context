@@ -4,35 +4,48 @@ require 'yaml'
 module ConfigContext
   extend self
   
-  @config = {}
+  @config = { }
   
   class Error < StandardError; end
   
+  
   private
+  
+  
+  def _method_to_key( method )
+    method.to_s.delete( '=?!' ).to_sym
+  end
+  
   def _add_property( method, *arguments )
-    
-    property_key          = method.to_s.delete( '=' ).to_sym
-    @config[property_key] = arguments.length == 1 ? arguments[0] : arguments
+    @config[_method_to_key( method )] = arguments.length == 1 ? arguments[0] : arguments
   end
   
   def _property?( method )
-    
-    property_key = method.to_s.delete( '?' ).to_sym
-    @config.keys.include?( property_key )
+    @config.keys.include?( _method_to_key( method ) )
   end
   
   def _get_property( method )
     @config[method]
   end
 
-  def configure_from_yaml( config_file ) 
+  def configure_from_hash( hash )
+    @config.merge!( hash )
+  end
 
-    YAML.load_file( config_file ).each do |key,value|
-      
-      @config[key] = value
-    end
+  def configure_from_yaml( config_file )
+
+    YAML.load_file( config_file ).each { |k, v| @config[k] = v }
   rescue Exception => e
     raise ConfigContext::Error.new( e.message )
+  end  
+
+  def self.deprecate( old_method, new_method ) 
+
+    define_method( old_method ) do |*arguments, &block|
+      
+      warn( "Warning: #{old_method}() is deprecated. Use #{new_method}() instead." )
+      send( new_method, *arguments, &block )
+    end 
   end
   
   
@@ -50,9 +63,11 @@ module ConfigContext
   
   def configure( *arguments, &block )
     
-    configuration = case arguments[0]
+    case arguments[0]
       when /\.(yml|yaml)/i
         configure_from_yaml( arguments[0] )
+      when Hash
+        configure_from_hash( arguments[0] )
       else
         yield self if block_given?
       end
@@ -61,8 +76,7 @@ module ConfigContext
   def to_hash()
     @config
   end
-
-  # Backward compat with older versions
-  alias :load :configure
-  alias :all :to_hash
+  
+  deprecate :load, :configure
+  deprecate :all,  :to_hash
 end
