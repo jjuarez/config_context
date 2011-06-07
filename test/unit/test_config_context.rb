@@ -30,6 +30,7 @@ class TestConfigContext < Test::Unit::TestCase
       assert_equal( ConfigContext.mysymbol, TEST_SYMBOL )
       assert_equal( ConfigContext.mylist, TEST_LIST )
       assert_equal( ConfigContext.myhash, TEST_HASH )
+      assert_equal( ConfigContext.mysymbol, ConfigContext[:mysymbol])
     end
 
     should "check the presence of some properties" do
@@ -60,22 +61,27 @@ class TestConfigContext < Test::Unit::TestCase
 
     should "configure from a Yaml file" do
           
-      assert_raises( ConfigContext::Error ) { ConfigContext.configure( "very_bad_file.yml" ) }
+      [ "yml", "yaml", "conf", "config" ].each do |extension|
+      
+        assert_raises( ConfigContext::Error ) { ConfigContext.configure( "this_file_do_not_exist.#{extension}" ) }
+      end
+      
+      assert_equal( ConfigContext.to_hash, ConfigContext.configure( "total_foo_bar.file" ).to_hash )
       
       ConfigContext.configure( File.join( File.dirname( __FILE__ ), %w[ .. fixtures test.yml] ) )    
       assert_equal( ConfigContext.to_hash, { 
-        :mysymbol    =>TEST_SYMBOL, 
-        :mylist      =>TEST_LIST, 
-        :myhash      =>TEST_HASH 
+        :mysymbol =>TEST_SYMBOL, 
+        :mylist   =>TEST_LIST, 
+        :myhash   =>TEST_HASH 
       } )
     end
 
     should "configurre from a Hash" do
       
       config_hash = { 
-        :mysymbol    =>TEST_SYMBOL, 
-        :mylist      =>TEST_LIST, 
-        :myhash      =>TEST_HASH 
+        :mysymbol =>TEST_SYMBOL, 
+        :mylist   =>TEST_LIST, 
+        :myhash   =>TEST_HASH 
       }
       
       ConfigContext.configure( config_hash )

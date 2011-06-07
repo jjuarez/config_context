@@ -4,77 +4,73 @@ require 'yaml'
 module ConfigContext
   extend self
   
-  @config = { }
+  @config ||= {}
   
   class Error < StandardError; end
-  
+
   
   private
-  
-  
-  def _method_to_key( method )
-    method.to_s.delete( '=?!' ).to_sym
+  def _add_property(property, *arguments)
+    @config[property.to_s.delete("=?").to_sym] = arguments.length == 1 ? arguments[0] : arguments
   end
   
-  def _add_property( method, *arguments )
-    @config[_method_to_key( method )] = arguments.length == 1 ? arguments[0] : arguments
+  def _exist_property?(property)
+    @config.keys.include?(property.to_s.delete("=?").to_sym)
   end
   
-  def _property?( method )
-    @config.keys.include?( _method_to_key( method ) )
-  end
-  
-  def _get_property( method )
-    @config[method]
+  def _get_property(property)
+    @config[property]
   end
 
-  def configure_from_hash( hash )
-    @config.merge!( hash )
-  end
+  def self.deprecate(old_method, new_method) 
 
-  def configure_from_yaml( config_file )
-
-    YAML.load_file( config_file ).each { |k, v| @config[k] = v }
-  rescue Exception => e
-    raise ConfigContext::Error.new( e.message )
-  end  
-
-  def self.deprecate( old_method, new_method ) 
-
-    define_method( old_method ) do |*arguments, &block|
+    define_method(old_method) do |*arguments, &block|
       
-      warn( "Warning: #{old_method}() is deprecated. Use #{new_method}() instead." )
-      send( new_method, *arguments, &block )
+      warn("#{old_method}() is deprecated. Use #{new_method}() instead.")
+      send(new_method, *arguments, &block)
     end 
   end
   
   
-  public  
-  def method_missing( method, *arguments, &block )
+  public
+  def method_missing(method, *arguments, &block)
     
-    if( method.to_s =~ /(.+)=$/ )
-      _add_property( method, *arguments )
-    elsif( method.to_s =~ /(.+)\?$/ )
-      _property?( method )
+    case method.to_s
+      when /(.+)=$/  then _add_property(method, *arguments)
+      when /(.+)\?$/ then _exist_property?(method)
     else
-      _get_property( method )
+      _get_property(method)
     end
   end
   
-  def configure( *arguments, &block )
-    
+  def configure(*arguments, &block)
+   
     case arguments[0]
-      when /\.(yml|yaml)/i
-        configure_from_yaml( arguments[0] )
+      when /\.(yml|yaml|conf|config)/i
+        if(File.exist?(arguments[0]))
+          @config.merge!(YAML.load_file(arguments[0]))
+        else
+          raise ConfigContext::Error.new("The config file: #{arguments[0]} do not exist")
+        end
       when Hash
-        configure_from_hash( arguments[0] )
+        @config.merge!(arguments[0])
       else
         yield self if block_given?
-      end
+    end
+    
+    self
+  rescue Exception=>e
+    raise ConfigContext::Error.new(e.message)
   end
 
   def to_hash()
     @config
+  end
+  
+  ##
+  # Backward compability...
+  def [](key)
+    @config[key]
   end
   
   deprecate :load, :configure
