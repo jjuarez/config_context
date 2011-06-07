@@ -1,4 +1,6 @@
 begin
+  require 'rake'
+  require 'rake/testtask'
   require 'fileutils'
   require 'jeweler'
     
@@ -26,7 +28,7 @@ end
 
 
 desc "Build the gem..."
-task :build =>[:clean] do
+task :build =>[:clean, :test] do
 
   Jeweler::Tasks.new do |gemspec|
 
@@ -45,7 +47,7 @@ end
 
 
 desc "Measures unit test coverage"
-task :coverage=>[:clean] do
+task :coverage=>:clean do
 
   INCLUDE_DIRECTORIES = "lib:test"
 
@@ -58,14 +60,16 @@ task :coverage=>[:clean] do
   run_coverage Dir["test/**/*.rb"]
 end
 
+desc 'Test all this stuff'
+Rake::TestTask.new(:test) do |test|
 
-desc "Testing..."
-task :test=>[:build] do 
-  require 'rake/runtest'
-  
-  Rake.run_tests 'test/unit/test_*.rb'
+  test.libs << 'lib'
+  test.libs << 'test'
+
+  test.pattern = 'test/**/test_*.rb'
+  test.verbose = true
 end
 
 
 desc "The default task"
-task :default=>[:test]
+task :default=>:test
