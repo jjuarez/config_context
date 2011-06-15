@@ -63,7 +63,7 @@ class TestConfigContext < Test::Unit::TestCase
           
       [ "yml", "yaml", "conf", "config" ].each do |extension|
       
-        assert_raises( ConfigContext::Error ) { ConfigContext.configure( "this_file_do_not_exist.#{extension}" ) }
+        assert_raises( ConfigContext::ConfigError ) { ConfigContext.configure( "this_file_do_not_exist.#{extension}" ) }
       end
       
       assert_equal( ConfigContext.to_hash, ConfigContext.configure( "total_foo_bar.file" ).to_hash )

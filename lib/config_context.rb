@@ -6,7 +6,7 @@ module ConfigContext
   
   @config ||= {}
   
-  class Error < StandardError; end
+  class ConfigError < StandardError; end
 
   
   private
@@ -47,11 +47,7 @@ module ConfigContext
    
     case arguments[0]
       when /\.(yml|yaml|conf|config)/i
-        if(File.exist?(arguments[0]))
-          @config.merge!(YAML.load_file(arguments[0]))
-        else
-          raise ConfigContext::Error.new("The config file: #{arguments[0]} do not exist")
-        end
+        @config.merge!(YAML.load_file(arguments[0]))
       when Hash
         @config.merge!(arguments[0])
       else
@@ -60,7 +56,7 @@ module ConfigContext
     
     self
   rescue StandardError=>e
-    raise ConfigContext::Error.new(e.message)
+    raise ConfigError.new(e.message)
   end
 
   def to_hash()
