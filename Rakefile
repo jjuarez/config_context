@@ -28,7 +28,7 @@ end
 
 
 desc "Build the gem..."
-task :build =>[:clean, :test] do
+task :build =>:clean do
 
   Jeweler::Tasks.new do |gemspec|
 

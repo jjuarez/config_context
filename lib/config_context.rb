@@ -59,7 +59,7 @@ module ConfigContext
     end
     
     self
-  rescue Exception=>e
+  rescue StandardError=>e
     raise ConfigContext::Error.new(e.message)
   end
 
