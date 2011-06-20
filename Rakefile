@@ -32,14 +32,14 @@ task :build =>:clean do
 
   Jeweler::Tasks.new do |gemspec|
 
-    gemspec.name              = Version::NAME
-    gemspec.version           = Version::VERSION
-    gemspec.rubyforge_project = "http://github.com/jjuarez/#{Version::NAME}"
+    gemspec.name              = ConfigContext::Version::NAME
+    gemspec.version           = ConfigContext::Version::VERSION
+    gemspec.rubyforge_project = "http://github.com/jjuarez/#{ConfigContext::Version::NAME}"
     gemspec.license           = 'MIT'
     gemspec.summary           = 'A Config Context for little applications'
     gemspec.description       = 'My config DSL'
     gemspec.email             = 'javier.juarez@gmail.com'
-    gemspec.homepage          = "http://github.com/jjuarez/#{Version::NAME}"
+    gemspec.homepage          = "http://github.com/jjuarez/#{ConfigContext::Version::NAME}"
     gemspec.authors           = ['Javier Juarez']
     gemspec.files             = Dir[ 'lib/**/*.rb' ] + Dir[ 'test/**/*.rb' ]
   end

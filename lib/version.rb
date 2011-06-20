@@ -1,10 +1,24 @@
-module Version
-  INFO = {
-    :major =>0,
-    :minor =>6,
-    :patch =>1
-  }
+module ConfigContext
+  class Version
+    
+    INFO = {
+      :major =>0,
+      :minor =>6,
+      :patch =>2
+    }
+    
+    def self.number(version_info=INFO)
 
-  NAME    = 'config_context'
-  VERSION = [INFO[:major], INFO[:minor], INFO[:patch]].join( '.' )
+      if RUBY_VERSION =~ /1\.8\.\d/
+        [version_info[:major], version_info[:minor],version_info[:patch]].join('.')
+      else
+        version_info.values.join('.')
+      end
+    end
+    
+
+    NAME    = 'config_context'
+    NUMBER  = "#{number()}"
+    VERSION = [INFO[:major], INFO[:minor], INFO[:patch]].join( '.' )
+  end
 end
