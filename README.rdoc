@@ -55,7 +55,13 @@ The latest stable version is published in rubygems.
   ##
   # Reset the context !!!
   ConfigContext.erase!
-  ConfigContext.to_hash == {}	
+  ConfigContext.to_hash == {} #must true
+
+  ##
+  # Use contexts
+  ConfigContext.configure(:context=>"ContextA", 'settings.json')
+
+  puts ConfigContext.ContextA[:property]
 
 == TODO
 
