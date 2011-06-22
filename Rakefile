@@ -42,6 +42,8 @@ task :build =>:clean do
     gemspec.homepage          = "http://github.com/jjuarez/#{ConfigContext::Version::NAME}"
     gemspec.authors           = ['Javier Juarez']
     gemspec.files             = Dir[ 'lib/**/*.rb' ] + Dir[ 'test/**/*.rb' ]
+
+    gemspec.add_runtime_dependency 'json'
   end
 end
 
@@ -67,7 +69,7 @@ Rake::TestTask.new(:test) do |test|
   test.libs << 'test'
 
   test.pattern = 'test/**/test_*.rb'
-  test.verbose = true
+  test.verbose = false
 end
 
 

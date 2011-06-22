@@ -1,27 +1,13 @@
 require 'yaml'
+require 'json'
 
 
 module ConfigContext
   extend self
   
-  @config ||= {}
-  
   class ConfigError < StandardError; end
 
-  
   private
-  def _add_property(property, *arguments)
-    @config[property.to_s.delete("=?").to_sym] = arguments.length == 1 ? arguments[0] : arguments
-  end
-  
-  def _exist_property?(property)
-    @config.keys.include?(property.to_s.delete("=?").to_sym)
-  end
-  
-  def _get_property(property)
-    @config[property]
-  end
-
   def self.deprecate(old_method, new_method) 
 
     define_method(old_method) do |*arguments, &block|
@@ -35,37 +21,89 @@ module ConfigContext
   public
   def method_missing(method, *arguments, &block)
     
+    @config ||= { }
+    
     case method.to_s
-      when /(.+)=$/  then _add_property(method, *arguments)
-      when /(.+)\?$/ then _exist_property?(method)
+      when /(.+)=$/  then @config[method.to_s.delete("=").to_sym] = arguments.length == 1 ? arguments[0] : arguments
+      when /(.+)\?$/ then @config.keys.include?(method.to_s.delete("=?").to_sym)
     else
-      _get_property(method)
-    end
+
+      if @config.keys.include?(method)
+        @config[method]
+      else 
+        super
+      end
+    end    
   end
   
-  def configure(*arguments, &block)
-   
-    case arguments[0]
-      when /\.(yml|yaml|conf|config)/i
-        @config.merge!(YAML.load_file(arguments[0]))
-      when Hash
-        @config.merge!(arguments[0])
-      else
+  def erase!()
+    @config = { }
+  end
+  
+  # def configure(*arguments, &block)
+  # 
+  #   @config ||= { }
+  #   
+  #   source = arguments[0]
+  #   
+  #   case source
+  #     when /\.(yml|yaml)/i then @config.merge!(YAML.load_file(source)) rescue raise ConfigError.new("Problems loading the config file")
+  #     when /\.json/i       then @config.merge!(JSON.parse(File.read(source))) rescue raise ConfigError.new("Problems loading the config file")
+  #     when Hash            then @config.merge!(source)
+  #     when Symbol          then @config[source.to_sym] = { }
+  #   else yield self if block_given?
+  #   end
+  #   
+  #   self
+  # end
+
+  def configure(source=nil, options={}, &block)
+
+    @config ||= { }
+    
+    options = {:source=>nil, :context=>:root}.merge(options)
+    
+    if options[:context] == :root
+
+      case source
+        when /\.(yml|yaml)/i then @config.merge!(YAML.load_file(source)) rescue raise ConfigError.new("Problems loading file")
+        when /\.json/i       then @config.merge!(JSON.parse(File.read(source))) rescue raise ConfigError.new("Problems loading file")
+        when Hash            then @config.merge!(source)
+      else 
         yield self if block_given?
+      end
+    else
+
+      @config[options[:context]] ||= { }
+      
+      case source
+        when /\.(yml|yaml)/i then @config[options[:context]].merge!(YAML.load_file(source)) rescue raise ConfigError.new("Problems loading file")
+        when /\.json/i       then @config[options[:context]].merge!(JSON.parse(File.read(source))) rescue raise ConfigError.new("Problems loading file")
+        when Hash            then @config[options[:context]].merge!(source)
+      else 
+        yield self if block_given?
+      end
     end
     
     self
-  rescue StandardError=>e
-    raise ConfigError.new(e.message)
   end
 
-  def to_hash()
-    @config
+  def to_hash 
+    @config ||= { }
+  end
+    
+  def to_s
+    "#{@config.inspect}"
+  end
+  
+  def inspect
+    @config.inspect
   end
   
   ##
   # Backward compability...
   def [](key)
+    @config ||= { } 
     @config[key]
   end
   
