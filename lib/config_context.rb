@@ -60,8 +60,8 @@ module ConfigContext
       @config[options[:context]] ||= { }
       
       case source
-        when /\.(yml|yaml)/i then @config[options[:context]].merge!(YAML.load_file(source)) rescue raise ConfigError.new("Problems loading file")
-        when /\.json/i       then @config[options[:context]].merge!(JSON.parse(File.read(source))) rescue raise ConfigError.new("Problems loading file")
+        when /\.(yml|yaml)/i then @config[options[:context]].merge!(YAML.load_file(source)) rescue raise ConfigError.new("Problems loading file: #{source}")
+        when /\.json/i       then @config[options[:context]].merge!(JSON.parse(File.read(source))) rescue raise ConfigError.new("Problems loading file: #{source}")
         when Hash            then @config[options[:context]].merge!(source)
       else 
         yield self if block_given?
