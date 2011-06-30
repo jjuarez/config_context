@@ -40,23 +40,6 @@ module ConfigContext
     @config = { }
   end
   
-  # def configure(*arguments, &block)
-  # 
-  #   @config ||= { }
-  #   
-  #   source = arguments[0]
-  #   
-  #   case source
-  #     when /\.(yml|yaml)/i then @config.merge!(YAML.load_file(source)) rescue raise ConfigError.new("Problems loading the config file")
-  #     when /\.json/i       then @config.merge!(JSON.parse(File.read(source))) rescue raise ConfigError.new("Problems loading the config file")
-  #     when Hash            then @config.merge!(source)
-  #     when Symbol          then @config[source.to_sym] = { }
-  #   else yield self if block_given?
-  #   end
-  #   
-  #   self
-  # end
-
   def configure(source=nil, options={}, &block)
 
     @config ||= { }
