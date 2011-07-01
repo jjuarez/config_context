@@ -63,6 +63,15 @@ The latest stable version is published in rubygems.
 
   puts ConfigContext.ContextA[:property]
 
+  ##
+  # Retrive with default values
+  ConfigContext.fetch(:donotexist, "default value") -> "default value"
+  ConfigContext.donotexist? -> false
+
+  ConfigContext.fetch!(:donotexist, "default value") -> "default value"
+  ConfigContext.donotexist? -> true
+ 
+
 == TODO
 
  * Sugestions are wellcome guys
