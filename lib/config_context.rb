@@ -114,6 +114,14 @@ module ConfigContext
       default ? default : nil
     end 
   end
+
+  def fetch!(key,default)
+    
+    @config || init
+    
+    @config[key] = default unless @config.include?(key)
+    @config[key]
+  end
   
   deprecate :load, :configure
   deprecate :all,  :to_hash

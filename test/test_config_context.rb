@@ -68,6 +68,9 @@ class TestConfigContext < Test::Unit::TestCase
     assert_equal(ConfigContext.fetch(:mysymbol_, "default value"), "default value")
     assert_equal(ConfigContext.fetch(:mysymbol_, [1,2,3]), [1,2,3])
     assert_equal(ConfigContext.fetch(:mysymbol_, {:a=>'a', :b=>'b'}), {:a=>'a', :b=>'b'})
+    
+    assert_equal(ConfigContext.fetch!(:mysymbol_, "default value"), "default value")    
+    assert_equal(ConfigContext.fetch!(:mysymbol_, "new value"), "default value")    
   end
 
   
