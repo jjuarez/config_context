@@ -1,8 +1,9 @@
+$:.unshift(File.join(File.dirname(__FILE__), '..'))
 $:.unshift(File.join(File.dirname(__FILE__), %w[.. lib]))
 
 
 require 'rubygems'
-require 'test/unit'
+require 'test/unit_extensions'
 require 'config_context'
 
 
@@ -14,7 +15,7 @@ class TestConfigContext < Test::Unit::TestCase
   TEST_LIST      = [1, 2, 3]
   TEST_HASH      = { "a"=>1, "b"=>2, "c"=>3 }
    
-   
+  
   def setup
 
     ConfigContext.configure do |config|
@@ -32,7 +33,7 @@ class TestConfigContext < Test::Unit::TestCase
   end
   
   
-  def test_configure_properties
+  must "configure properties" do
   
     assert_equal(ConfigContext.mysymbol, TEST_SYMBOL)
     assert_equal(ConfigContext.mylist, TEST_LIST)
@@ -41,7 +42,7 @@ class TestConfigContext < Test::Unit::TestCase
   end
 
 
-  def test_check_the_presence_of_some_properties
+  must "check the presence of some properties" do
   
     assert(ConfigContext.mysymbol?)
     assert(ConfigContext.mylist?)
@@ -50,7 +51,7 @@ class TestConfigContext < Test::Unit::TestCase
   end
 
   
-  def test_retrive_all_properties
+  must "retrive all properties" do
    
     assert_equal(ConfigContext.to_hash, { 
       :mysymbol =>TEST_SYMBOL, 
@@ -60,7 +61,7 @@ class TestConfigContext < Test::Unit::TestCase
   end
 
 
-  def test_retrive_all_properties_with_defaults
+  must "retrive all properties with defaults" do
    
     assert(!ConfigContext.fetch(:mysymbol_))
 
@@ -74,7 +75,7 @@ class TestConfigContext < Test::Unit::TestCase
   end
 
   
-  def test_retrieve_all_property_keys
+  must "retrieve all property keys" do
 
     [:mysymbol, :mylist, :myhash].each do |key|
     
@@ -82,7 +83,7 @@ class TestConfigContext < Test::Unit::TestCase
     end
   end
 
-  def test_update_properties
+  must "update properties" do
     
     assert_equal(ConfigContext.mysymbol, TEST_SYMBOL)
     ConfigContext.mysymbol = "A"
@@ -100,7 +101,7 @@ class TestConfigContext < Test::Unit::TestCase
   end
 
 
-  def test_configure_from_a_hash
+  must "configure from a hash" do
     
     config_hash = { 
       :mysymbol =>TEST_SYMBOL, 
@@ -113,7 +114,7 @@ class TestConfigContext < Test::Unit::TestCase
   end
 
   
-  def test_configuration_from_a_file_that_not_exist
+  must "configuration from a file that not exist" do
   
     ['json', 'yaml', 'yml'].each do |extension|
     
@@ -122,7 +123,7 @@ class TestConfigContext < Test::Unit::TestCase
   end
 
   
-  def test_configuration_from_a_bad_format_file
+  must "configuration from a bad format file" do
   
     ['foo', 'bar', 'bazz'].each do |extension|
     
@@ -142,7 +143,7 @@ class TestConfigContext < Test::Unit::TestCase
   end
 
   
-  def test_configure_from_a_yaml_file
+  must "configure from a yaml file" do
         
     ConfigContext.configure(TEST_FILE_YAML)    
     assert_equal(ConfigContext.to_hash, { 
@@ -156,7 +157,7 @@ class TestConfigContext < Test::Unit::TestCase
   end
 
   
-  def test_configure_from_a_yaml_file_in_a_context
+  must "configure from a yaml file in a context" do
         
     ConfigContext.configure(TEST_FILE_YAML, :context=>:yaml)
 
@@ -179,7 +180,7 @@ class TestConfigContext < Test::Unit::TestCase
   end
 
 
-  def test_configure_from_a_json_file
+  must "configure from a json file" do
         
     ConfigContext.configure(TEST_FILE_JSON)    
 
@@ -194,7 +195,7 @@ class TestConfigContext < Test::Unit::TestCase
   end
 
 
-  def test_configure_from_a_json_file_in_a_context
+  must "configure from a json file in a context" do
         
     ConfigContext.configure(TEST_FILE_JSON, :context=>:json)    
     
