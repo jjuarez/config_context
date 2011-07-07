@@ -4,7 +4,7 @@ module ConfigContext
     INFO = {
       :major =>0,
       :minor =>7,
-      :patch =>6
+      :patch =>7
     }
     
     def self.number(version_info=INFO)
