@@ -47,7 +47,7 @@ module ConfigContext
   end
   
   def erase!()
-    @config = Hash.new
+    @config.clear
   end
   
   def configure(source=nil, options={}, &block)
