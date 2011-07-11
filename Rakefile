@@ -1,77 +1,53 @@
+# encoding: utf-8
+
+require 'rubygems'
+require 'bundler'
 begin
-  require 'rake'
-  require 'rake/testtask'
-  require 'fileutils'
-  require 'jeweler'
-    
-rescue LoadError => le
-  fail( le.message )
+  Bundler.setup(:default, :development)
+rescue Bundler::BundlerError => e
+  $stderr.puts e.message
+  $stderr.puts "Run `bundle install` to install missing gems"
+  exit e.status_code
 end
+require 'rake'
 
+require 'jeweler'
+Jeweler::Tasks.new do |gem|
 
-$:.unshift( File.join( File.dirname( __FILE__ ), 'lib' ) )
+  gem.name        = "config_context"
+  gem.homepage    = "http://github.com/jjuarez/config_context"
+  gem.license     = "MIT"
+  gem.summary     = %Q{My configuration DSL}
+  gem.description = %Q{A library for help to configure applications}
+  gem.email       = "javier.juarez@gmail.com"
+  gem.authors     = ["Javier Juarez"]
 
-begin
-  require 'version'
-rescue LoadError => le
-  fail( "You must declare version information in lib/version.rb file (#{le.message})" )
 end
+Jeweler::RubygemsDotOrgTasks.new
 
-
-desc "Clean all temporary stuff"
-task :clean do
-
-  require 'fileutils'
-      
-  [ "coverage", "coverage.data", "pkg" ].each { |fd| FileUtils.rm_rf( fd ) } 
-end
-
-
-desc "Build the gem..."
-task :build =>:clean do
-
-  Jeweler::Tasks.new do |gemspec|
-
-    gemspec.name              = ConfigContext::Version::NAME
-    gemspec.version           = ConfigContext::Version::VERSION
-    gemspec.rubyforge_project = "http://github.com/jjuarez/#{ConfigContext::Version::NAME}"
-    gemspec.license           = 'MIT'
-    gemspec.summary           = 'A Config Context for little applications'
-    gemspec.description       = %q{ A simple point of view for application configuration }
-    gemspec.email             = 'javier.juarez@gmail.com'
-    gemspec.homepage          = "http://github.com/jjuarez/#{ConfigContext::Version::NAME}"
-    gemspec.authors           = ['Javier Juarez']
-    gemspec.files             = Dir[ 'lib/**/*.rb' ] + Dir[ 'test/**/*.rb' ]
-
-    gemspec.add_runtime_dependency 'json'
-  end
-end
-
-
-desc "Measures unit test coverage"
-task :coverage=>:clean do
-
-  INCLUDE_DIRECTORIES = "lib:test"
-
-  def run_coverage( files )
-
-    fail( "No files were specified for testing" ) if files.length == 0
-    sh "rcov --include #{INCLUDE_DIRECTORIES} --exclude gems/*,rubygems/* --sort coverage --aggregate coverage.data #{files.join( ' ' )}"
-  end
-
-  run_coverage Dir["test/**/*.rb"]
-end
-
-desc 'Test all this stuff'
+require 'rake/testtask'
 Rake::TestTask.new(:test) do |test|
-
-  test.libs << 'lib'
-  test.libs << 'test'
-
+  test.libs << 'lib' << 'test'
   test.pattern = 'test/**/test_*.rb'
-  test.verbose = false
+  test.verbose = true
 end
 
+require 'rcov/rcovtask'
+Rcov::RcovTask.new do |test|
+  test.libs << 'test'
+  test.pattern = 'test/**/test_*.rb'
+  test.verbose = true
+  test.rcov_opts << '--exclude "gems/*"'
+end
 
-desc "The default task"
-task :default=>:test
+task :default => :test
+
+require 'rake/rdoctask'
+Rake::RDocTask.new do |rdoc|
+  version = File.exist?('VERSION') ? File.read('VERSION') : ""
+
+  rdoc.rdoc_dir = 'rdoc'
+  rdoc.title = "gema #{version}"
+  rdoc.rdoc_files.include('README*')
+  rdoc.rdoc_files.include('lib/**/*.rb')
+end

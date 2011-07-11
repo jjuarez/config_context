@@ -2,21 +2,21 @@ GEM
   remote: http://rubygems.org/
   specs:
     git (1.2.5)
-    jeweler (1.6.2)
+    jeweler (1.6.4)
       bundler (~> 1.0)
       git (>= 1.2.5)
       rake
     json (1.5.3)
-    json (1.5.3-java)
     rake (0.9.2)
     rcov (0.9.9)
-    rcov (0.9.9-java)
+    shoulda (2.11.3)
 
 PLATFORMS
-  java
   ruby
 
 DEPENDENCIES
-  jeweler
+  bundler (~> 1.0.0)
+  jeweler (~> 1.6.4)
   json
   rcov
+  shoulda
