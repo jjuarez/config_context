@@ -1,6 +1,6 @@
 source "http://rubygems.org"
 
-gem 'json', '~>1.8'
+gem 'json', '~>2.3.0'
 
 group :development do
   gem "shoulda", ">= 0"
